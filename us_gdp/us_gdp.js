@@ -58,8 +58,7 @@ const plotData = dataset => {
      .on('mouseover', function (d, i) {
        d3.select(this).transition()
                       .duration('200')
-                      .attr('opacity', '.85');
-       // document.getElementById('tooltip_' + i).setAttribute('visibility', 'visible')
+                      .attr('opacity', '.5');
        tooltip.transition()
               .duration(50)
               .style("opacity", 1)
@@ -70,19 +69,19 @@ const plotData = dataset => {
                   case '01':
                   case '02':
                   case '03':
-                    return "Q1 " + year + "<br>" + d[1]
+                    return "Q1 " + year + "<br>" + "$" + d[1].toLocaleString('en-US', {maximumFractionDigits:2}) + "B"
                   case '04':
                   case '05':
                   case '06':
-                    return "Q2 " + year + "<br>" + d[1]
+                    return "Q2 " + year + "<br>" + "$" + d[1].toLocaleString('en-US', {maximumFractionDigits:2}) + "B"
                   case '07':
                   case '08':
                   case '09':
-                    return "Q3 " + year + "<br>" + d[1]
+                    return "Q3 " + year + "<br>" + "$" + d[1].toLocaleString('en-US', {maximumFractionDigits:2}) + "B"
                   case '10':
                   case '11':
                   case '12':
-                    return "Q4 " + year + "<br>" + d[1]
+                    return "Q4 " + year + "<br>" + "$" + d[1].toLocaleString('en-US', {maximumFractionDigits:2}) + "B"
                   default:
                     return year
                 }
@@ -100,69 +99,43 @@ const plotData = dataset => {
      })
      .on('mouseout', function (d, i) {
        d3.select(this).transition()
-                      .duration('200')
+                      .duration('50')
                       .attr('opacity', '1');
-       // document.getElementById('tooltip_' + i).setAttribute('visibility', 'hidden')
        tooltip.transition()
               .duration('50')
               .style("opacity", 0)
      })
 
-  //
-  // svg.selectAll("div")
-  //    .data(dataset.data)
-  //    .enter()
-  //    .append("div")
-  //    .attr('class', 'tooltip')
-  //    .attr('visibility', 'hidden')
-  //    .attr('id', (d, i) => 'tooltip_'  + i)
-  //    .html(d => {
-  //      const year = d[0].substring(0,4)
-  //      const month = d[0].substring(5,7)
-  //      switch (month) {
-  //       case '01':
-  //       case '02':
-  //       case '03':
-  //         return "Q1 " + year + "<br>" + d[1]
-  //       case '04':
-  //       case '05':
-  //       case '06':
-  //         return "Q2 " + year + "<br>" + d[1]
-  //       case '07':
-  //       case '08':
-  //       case '09':
-  //         return "Q3 " + year + "<br>" + d[1]
-  //       case '10':
-  //       case '11':
-  //       case '12':
-  //         return "Q4 " + year + "<br>" + d[1]
-  //       default:
-  //         return year
-  //     }
-  //    })
-  //    .attr('x', d => {
-  //      const year = parseInt(d[0].substring(0,4))
-  //      const month = parseInt(d[0].substring(5,7))
-  //      if(month > 9) return xScale(year + .75) + 5
-  //      else if(month > 6) return xScale(year + .5) + 5
-  //      else if (month > 3) return xScale(year + .25) + 5
-  //      else return xScale(year) + 5
-  //    })
-  //    .attr('y', h/2)
-  //    .attr('font-size', '12px')
-  //
+     //append axes
+     const xAxis = d3.axisBottom(xScale)
+                     //remove commas from year
+                     .tickFormat(d3.format(".0f"))
+                     .tickSize(10)
+     const yAxis = d3.axisLeft(yScale)
 
-   const xAxis = d3.axisBottom(xScale)
-                   //remove commas from year
-                   .tickFormat(d3.format(".0f"))
-                   .tickSize(10)
-   const yAxis = d3.axisLeft(yScale)
 
-   svg.append("g")
-      .attr("transform", "translate(0," + (h - padding) + ")")
-      .call(xAxis);
+     svg.append("g")
+        .attr("transform", "translate(0," + (h - padding) + ")")
+        .call(xAxis);
 
-   svg.append("g")
-      .attr("transform", "translate(" + padding + ", " + padding + ")")
-      .call(yAxis);
+     svg.append("g")
+        .attr("transform", "translate(" + padding + ", " + padding + ")")
+        .call(yAxis);
+
+     //axis labels
+     svg.append("text")
+        .attr("transform",
+              "translate(" + (w/2) + ", " +
+                             (h - padding + 40) + ")")
+        .style("text-anchor", "middle")
+        .text("Year");
+
+     svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", padding)
+        .attr("x", -h/2)
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("GDP (billions $)");
+
 }
